@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎁 Amigo Secreto</title>
+    <style>
+        body { font-family: system-ui, -apple-system, sans-serif; background: #f3f4f6; color: #1f2937; margin: 0; padding: 20px; display: flex; justify-content: center; }
+        .card { background: white; padding: 25px; border-radius: 16px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); max-width: 420px; width: 100%; text-align: center; }
+        h1 { color: #dc2626; margin-top: 0; font-size: 24px; }
+        .item { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid #eee; }
+        .item:last-child { border-bottom: none; }
+        button { background: #16a34a; color: white; border: none; padding: 8px 14px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 14px; }
+        button:active { transform: scale(0.97); }
+        .resultado-box { background: #fef2f2; border: 2px dashed #dc2626; padding: 20px; border-radius: 12px; margin: 20px 0; }
+        .nombre-secreto { font-size: 28px; font-weight: bold; color: #dc2626; margin: 10px 0 0 0; }
+        .oculto { display: none; }
+    </style>
+</head>
+<body>
+    <div class="card" id="vista-admin">
+        <h1>🎄 Sorteo Amigo Secreto</h1>
+        <p style="font-size:14px; color:#6b7280;">Toca el botón de cada persona para copiar su enlace secreto y enviárselo por WhatsApp.</p>
+        <div id="lista"></div>
+    </div>
+
+    <div class="card oculto" id="vista-secreta">
+        <h1>🎁 ¡Hola, <span id="quien-abre"></span>!</h1>
+        <p>Tu amigo secreto es:</p>
+        <div class="resultado-box">
+            <p class="nombre-secreto" id="su-amigo">???</p>
+        </div>
+        <p style="font-size:13px; color:#6b7280;">🤫 ¡Guarda el secreto! Toma captura para no olvidarlo.</p>
+    </div>
+
+    <script>
+        const sorteo = {
+            "naomi":     { n: "Naomi",     t: "RW1hbnVlbA==" },
+            "araceli":   { n: "Araceli",   t: "THVpcw==" },
+            "erika":     { n: "Erika",     t: "SmF2aWVy" },
+            "mayra":     { n: "Mayra",     t: "Sm9lbA==" },
+            "britany":   { n: "Britany",   t: "QXJhY2VsaQ==" },
+            "joel":      { n: "Joel",      t: "Sm9uYXRoYW4=" },
+            "javier":    { n: "Javier",    t: "TmFvbWk=" },
+            "joshua":    { n: "Joshua",    t: "QnJpdGFueQ==" },
+            "jonathan":  { n: "Jonathan",  t: "Sm9zaHVh" },
+            "emanuel":   { n: "Emanuel",   t: "TWF5cmE=" },
+            "luis":      { n: "Luis",      t: "RXJpa2E=" }
+        };
+
+        const params = new URLSearchParams(window.location.search);
+        const p = params.get('p');
+
+        if (p && sorteo[p]) {
+            document.getElementById('vista-admin').classList.add('oculto');
+            document.getElementById('vista-secreta').classList.remove('oculto');
+            document.getElementById('quien-abre').textContent = sorteo[p].n;
+            document.getElementById('su-amigo').textContent = atob(sorteo[p].t);
+        } else {
+            const lista = document.getElementById('lista');
+            Object.keys(sorteo).forEach(key => {
+                const div = document.createElement('div');
+                div.className = 'item';
+                const url = window.location.origin + window.location.pathname + '?p=' + key;
+                div.innerHTML = `<strong>${sorteo[key].n}</strong> <button onclick="copiar('${url}', this)">Copiar enlace</button>`;
+                lista.appendChild(div);
+            });
+        }
+
+        function copiar(texto, btn) {
+            navigator.clipboard.writeText(texto);
+            btn.textContent = "¡Copiado! ✅";
+            btn.style.background = "#2563eb";
+            setTimeout(() => { btn.textContent = "Copiar enlace"; btn.style.background = "#16a34a"; }, 2000);
+        }
+    </script>
+</body>
+</html>
